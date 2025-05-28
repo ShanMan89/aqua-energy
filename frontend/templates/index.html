@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HomeHarvest - Profile Input</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Enter Your Home Profile</h1>
+    <form id="profileForm">
+        <h2>Geographic Location</h2>
+        <label for="location">Address or Zipcode (use 5-digit US Zipcode for assessments):</label>
+        <input type="text" id="location" name="location" required><br><br>
+
+        <h2>Household Details</h2>
+        <label for="num_occupants">Number of Occupants:</label>
+        <input type="number" id="num_occupants" name="num_occupants" required><br><br>
+        <label for="home_size_sqft">Home Size (sq ft):</label>
+        <input type="number" id="home_size_sqft" name="home_size_sqft" required><br><br>
+
+        <h2>Optional Utility Usage</h2>
+        <label for="electricity_kwh">Average Monthly Electricity Consumption (kWh):</label>
+        <input type="number" id="electricity_kwh" name="electricity_kwh"><br><br>
+        <label for="water_gallons">Average Monthly Water Consumption (Gallons):</label>
+        <input type="number" id="water_gallons" name="water_gallons"><br><br>
+
+        <button type="submit">Submit Profile</button>
+    </form>
+
+    <div id="results-container">
+        <h2>Sustainability Assessments</h2>
+        <div id="solar-results">
+            <p>Solar assessment will appear here...</p>
+        </div>
+        <div id="rainwater-results">
+            <p>Rainwater assessment will appear here...</p>
+        </div>
+    </div>
+
+    <footer>
+        <hr>
+        <p>Learn more about sustainable home solutions:</p>
+        <ul>
+            <li><a href="{{ url_for('education_solar') }}">Learn about Solar Power</a></li>
+            <li><a href="{{ url_for('education_rainwater') }}">Learn about Rainwater Harvesting</a></li>
+            <li><a href="{{ url_for('roadmap') }}">View Your Personalized Roadmap (Coming Soon)</a></li>
+        </ul>
+        <p>&copy; 2023 HomeHarvest. All rights reserved.</p>
+    </footer>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
