@@ -10,6 +10,9 @@ This project helps homeowners understand the requirements and benefits of making
     *   Provides financial analysis including estimated system cost, annual savings (using user-provided or default electricity cost), and simple payback period.
     *   Estimates annual CO2 emissions reduction based on solar energy production and an average grid emissions factor.
 *   **Rainwater Harvesting Assessment:**
+    *   Estimates potential annual rainwater collection based on hardcoded regional rainfall data.
+    *   Provides financial analysis including estimated system cost (for a default storage size), annual savings (using user-provided or default water cost), and simple payback period.
+
     *   Estimates potential average annual rainwater collection by fetching ~30 years of historical daily precipitation data from the Visual Crossing Weather API for the geocoded location and calculating the average.
     *   Provides financial analysis including estimated system cost (for a default storage size), annual savings (using user-provided or default water cost), and simple payback period based on this live rainfall data.
 *   **Atmospheric Water Generation (AWG) Assessment:**
@@ -47,6 +50,13 @@ This project helps homeowners understand the requirements and benefits of making
     *   **NREL PVWatts API (for Solar Assessment):**
         *   **Purpose:** Provides solar irradiance data and estimates solar panel energy production.
         *   **Obtain Key:** Sign up at [https://developer.nrel.gov/signup/](https://developer.nrel.gov/signup/)
+        *   **`.env` Variable:** `NREL_API_KEY=YOUR_ACTUAL_NREL_API_KEY`
+
+    *   **OpenCage Geocoding API (for Location to Coordinates):**
+        *   **Purpose:** Converts user-provided location strings (like addresses or place names) into latitude and longitude coordinates, which are then used by the solar assessment.
+        *   **Obtain Key:** Sign up at [https://opencagedata.com/users/sign_up](https://opencagedata.com/users/sign_up)
+        *   **`.env` Variable:** `OPENCAGE_API_KEY=YOUR_ACTUAL_OPENCAGE_API_KEY`
+        *   **Note on Free Trial:** OpenCage offers a free trial with daily request limits (e.g., 2,500 requests/day). For sustained use beyond testing, a paid plan would be required. See their [pricing page](https://opencagedata.com/pricing) for details.
         *   **`.env` Variable:** `NREL_API_KEY=YOUR_NREL_API_KEY_HERE`
 
     *   **OpenCage Geocoding API (for Location to Coordinates):**
@@ -77,6 +87,17 @@ This project helps homeowners understand the requirements and benefits of making
     ```
     The application will typically be available at `http://127.0.0.1:5000/`.
 
+## Current Limitations
+
+*   **Solar Assessment:**
+    *   Uses OpenCage Geocoding API for location-to-coordinate conversion.
+    *   Uses NREL PVWatts API for solar energy production estimates.
+    *   Accuracy depends on the geocoding result and PVWatts model.
+*   **Rainwater Data Source:**
+    *   Rainfall estimation uses hardcoded regional averages (`RAINFALL_DATA` in `backend/app.py`) based on the input location string (e.g., zipcode).
+    *   Geocoding (OpenCage) is attempted for the location string to provide coordinates, but these coordinates are not currently used for a live rainfall data lookup.
+*   **Roadmap Feature:** The personalized roadmap is a placeholder.
+
 ## Assumptions, Defaults, and Key Limitations
 
 The application uses several default values and assumptions for its calculations, especially for financial and environmental estimates. These are used when user-specific data is not provided or for aspects of the calculation that are standardized for the MVP.
@@ -103,6 +124,9 @@ The application uses several default values and assumptions for its calculations
 *   **Rainwater System Sizing:** The rainwater system cost is based on a default storage capacity. A real system would be sized based on rainfall, collection area, and water demand.
 *   **Savings Accuracy:** Savings are directly tied to the energy/water cost inputs (user-provided or default) and the estimated production/collection.
 
+**Environmental Assumptions & Limitations:**
+
+*   **CO2 Emissions:** The CO2 reduction for solar is an estimate based on displacing average grid electricity. Actual displaced emissions can vary significantly by region (due to different grid mixes) and time of day.
 **Environmental & Data Source Assumptions & Limitations:**
 
 *   **Solar Assessment:**
@@ -140,6 +164,9 @@ The application uses several default values and assumptions for its calculations
     *   Key environmental fields: `default_co2_emissions_factor_kg_per_kwh_used`, `estimated_annual_co2_reduction_kg`, `environmental_notes`.
     *   Also includes geocoding information: `input_location_string`, `retrieved_latitude`, `retrieved_longitude`, `geocoding_data_source`.
 *   `/api/rainwater_assessment` (GET): Takes a `location` string and optional `home_size_sqft`.
+    *   Returns rainwater collection potential (based on hardcoded data) and financial estimates (system cost, annual savings, simple payback period).
+    *   Key financial fields: `user_water_cost_per_gallon_used`, `source_of_water_cost`, `estimated_annual_water_savings_dollars`, `default_rainwater_system_cost_per_gallon_storage_used`, `estimated_rainwater_system_storage_capacity_gallons_assumed`, `estimated_rainwater_system_cost_dollars`, `simple_rainwater_payback_period_years`, `financial_notes_rainwater`.
+    *   Also includes geocoding information: `input_location_string`, `retrieved_latitude`, `retrieved_longitude`, `geocoding_data_source`, `geocoding_notes`.
     *   Returns rainwater collection potential (based on live historical data from Visual Crossing API) and financial estimates (system cost, annual savings, simple payback period).
     *   Key data fields: `annual_rainfall_inches_source_data` (average from API), `rainfall_data_source` (e.g., "Visual Crossing API (live average)" or "Visual Crossing API (failed/zero) - No fallback available").
     *   Key financial fields: `user_water_cost_per_gallon_used`, `source_of_water_cost`, `estimated_annual_water_savings_dollars`, `default_rainwater_system_cost_per_gallon_storage_used`, `estimated_rainwater_system_storage_capacity_gallons_assumed`, `estimated_rainwater_system_cost_dollars`, `simple_rainwater_payback_period_years`, `financial_notes_rainwater`.
