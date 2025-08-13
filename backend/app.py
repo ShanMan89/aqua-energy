@@ -30,7 +30,7 @@ ROOF_AREA_SQFT_TO_M2_CONVERSION = 0.092903 # 1 sq ft = 0.092903 m^2
 
 # ZIPCODE_COORDINATES dictionary is now removed, replaced by OpenCage Geocoding.
 
-=======
+
 # --- In-memory data store & Cache ---
 user_profiles = []
 rainfall_cache = {} # Simple in-memory cache: {(lat, lon): {'timestamp': time.time(), 'data': avg_rainfall_inches}}
@@ -321,6 +321,11 @@ def create_profile():
         return jsonify({'status': 'error', 'message': 'Invalid household_details format'}), 400
 
     # Basic validation for utility_usage
+    if not isinstance(utility_usage.get('electricity_kwh_monthly'), (int, float)) or \
+       not isinstance(utility_usage.get('water_gallons_monthly'), (int, float)):
+        return jsonify({'status': 'error', 'message': 'Invalid utility_usage format'}), 400
+
+
     # Ensure monthly consumption values are numbers
     if not data: return jsonify({'status': 'error', 'message': 'No data provided'}), 400
     geographic_location = data.get('geographic_location')
@@ -367,6 +372,8 @@ def create_profile():
     profile_data = {
         'geographic_location': geographic_location,
         'household_details': household_details,
+        'utility_usage': utility_usage
+
         'utility_usage': final_utility_usage
     }
     
@@ -404,6 +411,7 @@ def solar_assessment():
     # Determine system capacity
     system_capacity_kw = 4.0 # Default kW
     notes = "Estimated annual AC energy production for a default 4 kW DC system."
+
     final_utility_usage = {
         'electricity_kwh_monthly': utility_usage.get('electricity_kwh_monthly'),
         'water_gallons_monthly': utility_usage.get('water_gallons_monthly'),
@@ -490,6 +498,11 @@ def solar_assessment():
             'retrieved_longitude': lon,
             'requested_system_capacity_kw': system_capacity_kw,
             'estimated_annual_ac_kwh': round(float(ac_annual_kwh), 2),
+            'notes': notes,
+            'solar_data_source': 'NREL PVWatts API v8',
+            'geocoding_data_source': 'OpenCage Geocoding API',
+            'pvwatts_api_inputs': pvwatts_data.get("inputs", {})
+        }), 200
             'notes': notes, # General notes about the solar production estimate
             'solar_data_source': 'NREL PVWatts API v8',
             'geocoding_data_source': 'OpenCage Geocoding API',
@@ -688,6 +701,14 @@ def rainwater_assessment():
         'retrieved_latitude': retrieved_lat,
         'retrieved_longitude': retrieved_lon,
         'annual_rainfall_inches_source_data': annual_rainfall_inches,
+        'collection_area_used_sqft': round(collection_area_sqft, 2),
+        'estimated_annual_gallons': round(estimated_annual_gallons, 2),
+        'notes': notes,
+        'rainfall_data_source': 'Hardcoded regional averages by input string',
+        'geocoding_data_source': geocoding_source,
+        'geocoding_notes': geocoding_notes
+    }), 200
+
         'input_location_string': location_query,
         'retrieved_latitude': retrieved_lat,
         'retrieved_longitude': retrieved_lon,

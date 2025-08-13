@@ -4,6 +4,9 @@ This project helps homeowners understand the requirements and benefits of making
 
 ## Features
 
+*   **User Profiling:** Input your location, household details, and utility usage.
+*   **Solar Assessment:** Estimates potential annual solar energy generation using the NREL PVWatts API.
+*   **Rainwater Harvesting Assessment:** Estimates potential annual rainwater collection.
 *   **User Profiling:** Input your location, household details, and utility usage, including optional average costs for electricity and water to personalize financial estimates.
 *   **Solar Assessment:**
     *   Estimates potential annual solar energy generation using the NREL PVWatts API, based on geocoded location.
@@ -57,6 +60,9 @@ This project helps homeowners understand the requirements and benefits of making
         *   **Obtain Key:** Sign up at [https://opencagedata.com/users/sign_up](https://opencagedata.com/users/sign_up)
         *   **`.env` Variable:** `OPENCAGE_API_KEY=YOUR_ACTUAL_OPENCAGE_API_KEY`
         *   **Note on Free Trial:** OpenCage offers a free trial with daily request limits (e.g., 2,500 requests/day). For sustained use beyond testing, a paid plan would be required. See their [pricing page](https://opencagedata.com/pricing) for details.
+
+5.  **Run the Flask application:**
+
         *   **`.env` Variable:** `NREL_API_KEY=YOUR_NREL_API_KEY_HERE`
 
     *   **OpenCage Geocoding API (for Location to Coordinates):**
@@ -90,6 +96,15 @@ This project helps homeowners understand the requirements and benefits of making
 ## Current Limitations
 
 *   **Solar Assessment:**
+    *   The solar assessment feature uses the OpenCage Geocoding API to convert the user-provided location string into latitude and longitude coordinates.
+    *   These coordinates are then passed to the NREL PVWatts API to estimate solar energy potential.
+    *   The accuracy of the solar assessment is dependent on the accuracy of the geocoded coordinates returned by OpenCage for the input location.
+*   **Rainwater Data Source:**
+    *   The rainwater harvesting assessment attempts to geocode the provided location string using OpenCage to obtain coordinates (which are included in the API response for informational purposes or future use).
+    *   However, the actual rainfall data used for estimation is still based on a hardcoded dictionary (`RAINFALL_DATA` in `backend/app.py`) which uses the original input location string (e.g., a zipcode) for lookup.
+    *   **It does not use a live API for rainfall data based on the geocoded coordinates.** This is a known limitation, and future development aims to integrate a live meteorological API.
+*   **Roadmap Feature:** The personalized roadmap is a placeholder and not yet implemented.
+
     *   Uses OpenCage Geocoding API for location-to-coordinate conversion.
     *   Uses NREL PVWatts API for solar energy production estimates.
     *   Accuracy depends on the geocoding result and PVWatts model.

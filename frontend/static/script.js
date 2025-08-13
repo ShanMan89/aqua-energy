@@ -8,6 +8,8 @@ document.addEventListener('DOMContentLoaded', function () {
         const location = document.getElementById('location').value;
         const numOccupants = parseInt(document.getElementById('num_occupants').value, 10);
         const homeSizeSqft = parseFloat(document.getElementById('home_size_sqft').value);
+        const electricityKwh = document.getElementById('electricity_kwh').value ? parseFloat(document.getElementById('electricity_kwh').value) : null;
+        const waterGallons = document.getElementById('water_gallons').value ? parseFloat(document.getElementById('water_gallons').value) : null;
         
         const electricityKwhInput = document.getElementById('electricity_kwh');
         const electricityKwh = electricityKwhInput.value ? parseFloat(electricityKwhInput.value) : null;
@@ -31,6 +33,7 @@ document.addEventListener('DOMContentLoaded', function () {
             },
             utility_usage: {
                 electricity_kwh_monthly: electricityKwh,
+                water_gallons_monthly: waterGallons
                 electricity_cost_per_kwh: electricityCost,
                 water_gallons_monthly: waterGallons,
                 water_cost_per_gallon: waterCost
@@ -109,6 +112,14 @@ document.addEventListener('DOMContentLoaded', function () {
             } else {
                 solarResultsDiv.innerHTML = `
                     <h3>Solar Power Assessment</h3>
+                    <p>Location (Zipcode): ${solarData.location_zipcode} (Lat: ${solarData.latitude}, Lon: ${solarData.longitude})</p>
+                    <p>Requested System Capacity: ${solarData.requested_system_capacity_kw} kW</p>
+                    <p>Estimated Annual Energy Production: <strong>${solarData.estimated_annual_ac_kwh} kWh AC</strong></p>
+                    <p>Data Source: <em>${solarData.data_source}</em></p>
+                    <p>Notes: <em>${solarData.notes}</em></p>
+                `;
+                // Optionally display PVWatts inputs if needed for debugging/advanced view
+                // solarResultsDiv.innerHTML += `<details><summary>PVWatts API Inputs</summary><pre>${JSON.stringify(solarData.inputs_to_pvwatts, null, 2)}</pre></details>`;
                     <p><strong>Location:</strong> ${solarData.input_location_string || 'N/A'} (Lat: ${solarData.retrieved_latitude || 'N/A'}, Lon: ${solarData.retrieved_longitude || 'N/A'})</p>
                     <p><strong>Geocoding Source:</strong> <em>${solarData.geocoding_data_source || 'N/A'}</em></p>
                     
@@ -143,6 +154,13 @@ document.addEventListener('DOMContentLoaded', function () {
             } else {
                 rainwaterResultsDiv.innerHTML = `
                     <h3>Rainwater Harvesting Assessment</h3>
+                    <p>Location (Zipcode): ${rainwaterData.location_zipcode}</p>
+                    <p>Source Annual Rainfall: ${rainwaterData.annual_rainfall_inches_source_data} inches/year</p>
+                    <p>Collection Area Used: ${rainwaterData.collection_area_used_sqft} sq ft</p>
+                    <p>Estimated Annual Collection: <strong>${rainwaterData.estimated_annual_gallons} Gallons</strong></p>
+                    <p>Data Source: <em>${rainwaterData.data_source}</em></p>
+                    <p>Notes: <em>${rainwaterData.notes}</em></p>
+
                     <p><strong>Location:</strong> ${rainwaterData.input_location_string || 'N/A'} (Lat: ${rainwaterData.retrieved_latitude || 'N/A'}, Lon: ${rainwaterData.retrieved_longitude || 'N/A'})</p>
                     <p><strong>Geocoding Source:</strong> <em>${rainwaterData.geocoding_data_source || 'N/A'}</em>. ${rainwaterData.geocoding_notes || ''}</p>
                     
